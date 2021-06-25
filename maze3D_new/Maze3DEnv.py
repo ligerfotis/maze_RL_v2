@@ -105,6 +105,7 @@ class Maze3D:
                 extra_time = self.display_timed_out_screen()
                 self.done = True
             duration_pause += extra_time
+            actions = [0, 0, 0, 0]
         reward = rewards.reward_function_maze(self.done, timed_out, ball=self.board.ball, goal=goal)
         return self.observation, reward, self.done, fps, duration_pause, action_list
 

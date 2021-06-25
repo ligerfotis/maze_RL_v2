@@ -531,7 +531,6 @@ class Experiment:
         """
         # if we do not test the model and the agent is ready to learn
         if not self.test_model and self.ready_to_learn(i_game):
-            print("update interval: {}".format(self.agent.update_interval))
             # check if it is time to learn
             if i_game % self.agent.update_interval == 0:
                 print("off policy learning.")

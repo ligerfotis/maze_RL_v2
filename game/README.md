@@ -1,6 +1,6 @@
 ## Human Input
 The human input is given to the system through the keyboard arrows and can be either discrete or continuous. 
-* Discrete input means that every key stroke produces one action. For another action, the human needs to release the button and press another one (or the same). 
+* Discrete input means that every keystroke produces one action. For another action, the human needs to release the button and press another one (or the same). It needs 5 keystrokes to reach the maximum rotation towards each direction from the starting pose of the tray.
 * Continuous input means that a new human action is given as long as a key is pressed. For a pressed key, a new action will be available every ~15ms.
 
 ## Experiment
