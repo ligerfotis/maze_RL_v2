@@ -7,12 +7,13 @@ import numpy as np
 from scipy.spatial import distance
 import time
 
-ball_diameter = 32
+ball_diameter = 43.615993
 damping_factor = 0.3
 discrete_steps_from_center = 5
 
 class GameBoard:
     def __init__(self, layout, discrete=False, rl=False):
+        self.box_size = 43.615993
         self.velocity = [0, 0]
         self.walls = []
         self.layout = layout
@@ -23,17 +24,20 @@ class GameBoard:
         self.scaling_x = self.max_x_rotation / discrete_steps_from_center if self.discrete else 0.03
         self.scaling_y = 0.01 if self.rl else self.scaling_x
 
-        for row in range(len(layout)):
+        self.num_of_boxes_x = len(layout)
+        self.num_of_boxes_y = len(layout[0])
+
+        for row in range(self.num_of_boxes_x):
             self.walls.append([])
-            for col in range(len(layout[0])):
+            for col in range(self.num_of_boxes_y):
                 self.walls[row].append(None)
                 if layout[row][col] != 0:
                     if layout[row][col] == 2:
-                        self.hole = Hole(32 * col - 240, 32 * row - 240, self)
+                        self.hole = Hole(self.box_size * col - self.num_of_boxes_y * self.box_size / 2, self.box_size * row - self.num_of_boxes_x * self.box_size / 2, self)
                     elif layout[row][col] == 3:
-                        self.ball = Ball(32 * col - 240, 32 * row - 240, self)
+                        self.ball = Ball(self.box_size * col - self.num_of_boxes_y * self.box_size / 2, self.box_size * row - self.num_of_boxes_x * self.box_size / 2, self)
                     else:
-                        self.walls[row][col] = Wall(32 * col - 240, 32 * row - 240, layout[row][col], self)
+                        self.walls[row][col] = Wall(self.box_size * col - self.num_of_boxes_y * self.box_size / 2, self.box_size * row - self.num_of_boxes_x * self.box_size / 2, layout[row][col], self)
 
         self.rot_x = 0
         self.rot_y = 0
@@ -53,8 +57,8 @@ class GameBoard:
         # if the ball hits a square obstacle, it will return True
         # and the collideTriangle will not be called
 
-        xGrid = math.floor((x + 240) / 32)
-        yGrid = math.floor((y + 240) / 32)
+        xGrid = math.floor((x + self.num_of_boxes_x * self.box_size / 2) / self.box_size)
+        yGrid = math.floor((y + self.num_of_boxes_y * self.box_size / 2) / self.box_size)
 
         biggest = max(xGrid, yGrid)
         smallest = min(xGrid, yGrid)
@@ -192,6 +196,7 @@ class Ball:
         self.y = y
         self.z = 0
         self.velocity = [0, 0]
+        self.box_size = 43.615993
 
     def update(self):
         # first translate to position on board, then rotate with the board
@@ -246,31 +251,31 @@ class Ball:
 
     def slide_on_upper_triangle(self, nextX, nextY, theta):
         # distance of a point (ball's edge towards the move direction) from a line
-        p1 = np.asarray([0, 32])
-        p2 = np.asarray([32, 0])
+        p1 = np.asarray([0, self.box_size])
+        p2 = np.asarray([self.box_size, 0])
         d = norm(np.cross(p2 - p1, p1 - [nextX, nextY])) / norm(p2 - p1)
 
         if d <= (ball_diameter / 2):
             # check if there is an opening
             # print([test_nextX, test_nextY])
             if self.velocity[0] > 0 and self.velocity[1] < 0 and theta >= 90:
-                if (nextX - ball_diameter/3) > -16:
+                if (nextX - ball_diameter/3) > -self.box_size/2:
                     self.velocity *= 1
                     return
-                elif (nextX - ball_diameter/2) < -16 and nextY - ball_diameter/2 <= 48:
+                elif (nextX - ball_diameter/2) < -self.box_size/2 and nextY - ball_diameter/2 <= self.box_size*1.5:
                     self.velocity *= 1                                                   
                     return
-            if -16 <= nextX - ball_diameter/2 and -16 <= nextY - ball_diameter/2:
+            if -self.box_size/2 <= nextX - ball_diameter/2 and -self.box_size/2 <= nextY - ball_diameter/2:
                 pass
             # block 2
-            elif nextX - ball_diameter/2 <= 48 and (nextY - ball_diameter/2) < -16:
+            elif nextX - ball_diameter/2 <= self.box_size*1.5 and (nextY - ball_diameter/2) < -self.box_size/2:
                 if self.velocity[1] < 0:
                     # keep going on the y axis
                     self.velocity[1] *= - damping_factor
                     # bounce on the x axis
                     self.velocity[0] = self.velocity[0] + self.velocity[1] * np.sin(theta * np.pi / 180)
             # block 1
-            elif (nextX - ball_diameter/2) < -16 and nextY - ball_diameter/2 <= 48:
+            elif (nextX - ball_diameter/2) < -ball_diameter/2 and nextY - ball_diameter/2 <= 48:
                 if self.velocity[0] < 0 and self.velocity[1] >= 0:
                     # bounce on the x axis
                     self.velocity[0] *= -1 * damping_factor
@@ -324,7 +329,7 @@ class Ball:
 
     def slide_on_lower_triangle(self, nextX, nextY, theta):
         # define the line that the ball must not pass to insert in the frontier
-        p1, p2 = np.asarray([0, -32]), np.asarray([-32, 0])
+        p1, p2 = np.asarray([0, -self.box_size]), np.asarray([-self.box_size, 0])
         # distance of a point (ball's edge towards the move direction) from a line
         d = distance_from_line(p2, p1, [nextX, nextY])
 
@@ -333,16 +338,16 @@ class Ball:
             # check if there is an opening
             # print([test_nextX, test_nextY])
             if self.velocity[0] > 0 and self.velocity[1] < 0 and theta >= 180:
-                if (nextX + ball_diameter/3) > 16:
+                if (nextX + ball_diameter/3) > self.box_size/2:
                     self.velocity *= 1
                     return
-                elif (nextX + ball_diameter/2) > 16 and nextY - ball_diameter/2 <= 0:
+                elif (nextX + ball_diameter/2) > self.box_size/2 and nextY - ball_diameter/2 <= 0:
                     self.velocity *= 1
                     return
-            if nextX + ball_diameter/2 <= 16 and nextY + ball_diameter/2 <= 16:
+            if nextX + ball_diameter/2 <= self.box_size/2 and nextY + ball_diameter/2 <= self.box_size/2:
                 pass
             # block 2
-            elif 16 < nextX + ball_diameter/2 and -48 <= nextY + ball_diameter/2:
+            elif self.box_size/2 < nextX + ball_diameter/2 and -self.box_size*1.5 <= nextY + ball_diameter/2:
                 if self.velocity[0] > 0:
                     # # bounce on the x axis
                     # self.velocity[0] *= -1 * damping_factor
@@ -353,7 +358,7 @@ class Ball:
                      # keep going on the y axis
                     self.velocity[1] = self.velocity[1] + self.velocity[0] * np.cos(theta * np.pi / 180)
             # block 1
-            elif -48 <= nextX + ball_diameter/2 and 16 < nextY + ball_diameter/2:
+            elif -self.box_size*1.5 <= nextX + ball_diameter/2 and self.box_size/2 < nextY + ball_diameter/2:
                 if self.velocity[1] > 0:
                     # # bounce on the x axis
                     # self.velocity[0] *= damping_factor

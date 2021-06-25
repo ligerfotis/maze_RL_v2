@@ -7,12 +7,12 @@ from plot_utils.plot_utils import plot_learning_curve, plot, plot_test_score, pl
 
 goals = {"left_down": left_down, "left_up": left_up, "right_down": right_down}
 
-ball_diameter = 32
+ball_diameter = 43.615993
 
 
 def checkTerminal(ball, goal):
     goal = goals[goal]
-    if distance.euclidean([ball.x, ball.y], goal) < (ball_diameter/2):
+    if distance.euclidean([ball.x, ball.y], goal) < (ball_diameter/3):
         return True
     return False
 

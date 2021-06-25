@@ -5,13 +5,13 @@ from game import rewards
 from maze3D_new.gameObjects import *
 from maze3D_new.assets import *
 from maze3D_new.utils import checkTerminal, convert_actions
-from maze3D_new.layouts import layout_up_right, layout_down_right, layout_up_left
+from maze3D_new.layouts import layout_up_right, layout_down_right, layout_up_left, layout_10_up_right
 # RL modules
 from plot_utils.plot_utils import get_config
 
 # the game layouts
-layouts = [layout_down_right, layout_up_left, layout_up_right]
-# layouts = [layout_up_right]
+# layouts = [layout_down_right, layout_up_left, layout_up_right]
+layouts = [layout_10_up_right]
 
 
 class ActionSpace:

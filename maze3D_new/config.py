@@ -79,11 +79,11 @@ glEnable(GL_CULL_FACE)
 
 ########################MODELS######################################
 BOARD_MODEL = ObjModel("maze3D_new/models/board.obj")
-BALL_MODEL = ObjModel("maze3D_new/models/ball_32cm.obj")
-WALL_MODELS = [ObjModel("maze3D_new/models/wall_tall.obj"), ObjModel("maze3D_new/models/wall_half_1_big.obj"),
-				ObjModel("maze3D_new/models/wall_half_2_big.obj"), ObjModel("maze3D_new/models/wall_half_corner_1_big_tall.obj"),
-				ObjModel("maze3D_new/models/wall_half_corner_2_big_tall.obj")]
-HOLE_MODEL = ObjModel("maze3D_new/models/hole_x2_5.obj")
+BALL_MODEL = ObjModel("maze3D_new/models/ball_big.obj")
+WALL_MODELS = [ObjModel("maze3D_new/models/wall_tall_big.obj"), ObjModel("maze3D_new/models/wall_half_1_big.obj"),
+				ObjModel("maze3D_new/models/wall_half_2_big.obj"), ObjModel("maze3D_new/models/wall_half_corner_1_bigger_tall.obj"),
+				ObjModel("maze3D_new/models/wall_half_corner_2_bigger_tall.obj")]
+HOLE_MODEL = ObjModel("maze3D_new/models/ball_big.obj")
 TEXT_MODEL = ObjModel("maze3D_new/models/text.obj")
 
 ########################TEXTURES####################################
